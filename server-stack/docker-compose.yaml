@@ -1,0 +1,99 @@
+---
+version: '3.7'
+services:
+  es:
+    container_name: es
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    environment:
+      TZ: Asia/Shanghai
+      ES_JAVA_OPTS: "-Xms4g -Xmx4g"
+      ELASTIC_USERNAME: "elastic"
+      ELASTIC_PASSWORD: "elastic"
+      node.name: es01
+      discovery.type: single-node
+      cluster.name: eh
+      bootstrap.memory_lock: "true"
+      http.cors.enabled: "true"
+      http.cors.allow-methods: OPTIONS,HEAD,GET,POST,PUT,DELETE
+      http.cors.allow-headers: "*"
+      http.cors.allow-origin: "*"
+      xpack.security.enabled: "true"
+      xpack.security.http.ssl.enabled: "true"
+      xpack.security.authc.api_key.enabled: "true"
+      xpack.security.http.ssl.key: "pkey.pem"
+      xpack.security.http.ssl.certificate: "cert.pem"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+    - ./es-data:/usr/share/elasticsearch/data
+    - ./pkey.pem:/usr/share/elasticsearch/config/pkey.pem
+    - ./cert.pem:/usr/share/elasticsearch/config/cert.pem
+    ports:
+    - 9200:9200
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+    - 8201:80
+    links:
+    - apm1
+    - apm2
+    depends_on:
+    - apm1
+    - apm2
+  apm1:
+    container_name: apm1
+    image: docker.elastic.co/apm/apm-server:7.16.3
+    user: apm-server
+    command: -e --strict.perms=false
+    volumes:
+    - ./apm-server.docker.yaml:/usr/share/apm-server/apm-server.yml:ro
+    # environment:
+    # - output.elasticsearch.hosts=["es:9200"]
+    links:
+    - es
+    ports:
+    - 8202:8200
+  apm2:
+    container_name: apm2
+    image: docker.elastic.co/apm/apm-server:7.16.3
+    user: apm-server
+    command: -e --strict.perms=false
+    volumes:
+    - ./apm-server.docker.yaml:/usr/share/apm-server/apm-server.yml:ro
+    # environment:
+    # - output.elasticsearch.hosts=["es:9200"]
+    links:
+    - es
+    ports:
+    - 8203:8200
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.16.3
+    links:
+    - es
+    ports:
+    - 5601:5601
+    environment:
+      ELASTICSEARCH_HOSTS: "https://es:9200"
+      ELASTICSEARCH_USERNAME: "elastic"
+      ELASTICSEARCH_PASSWORD: "elastic"
+      ELASTICSEARCH_SSL_VERIFICATIONMODE: "none"
+      XPACK_SECURITY_ENABLED: "true"
+      XPACK_SECURITY_ENCRYPTIONKEY: "something_at_least_32_characters"
+      XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: "something_at_least_32_characters"
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-oss:8.3.6
+    ports:
+    - 3001:3000
+    volumes:
+    - ./ds.yml:/etc/grafana/provisioning/datasources/datasources.yaml
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"

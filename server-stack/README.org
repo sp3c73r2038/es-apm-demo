@@ -1,0 +1,4 @@
+#+begin_src bash
+$ make
+$ docker-compose up -d
+#+end_src

@@ -1,0 +1,6 @@
+#+begin_src bash
+$ make gen-proto # if proto files updated
+$ make user      # run user service
+$ make order     # run order service
+$ make client    # run client
+#+end_src

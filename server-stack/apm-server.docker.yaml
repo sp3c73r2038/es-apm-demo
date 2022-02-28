@@ -1,0 +1,52 @@
+apm-server:
+  host: "0.0.0.0:8200"
+  # ilm:
+  #   enabled: true
+  #   setup:
+  #     enabled: true
+  #     overwrite: true
+  #     require_policy: true
+  #     mapping:
+  #     - event_type: "transaction"
+  #       policy_name: "demo-apm-rollover-10-minutes"
+  #       index_suffix: "staging"
+  #     - event_type: "span"
+  #       policy_name: "demo-apm-rollover-10-minutes"
+  #       index_suffix: "staging"
+  #     # - event_type: "metric"
+  #     # - event_type: "error"
+  #     policies:
+  #     - name: "demo-apm-rollover-10-minutes"
+  #       policy:
+  #         phases:
+  #           hot:
+  #             actions:
+  #               rollover:
+  #                 max_size: "200kb"
+  #                 max_age: "10m"
+  #               set_priority:
+  #                 priority: 100
+  #           warm:
+  #             min_age: "1d"
+  #             actions:
+  #               set_priority:
+  #                 priority: 50
+  #               readonly: {}
+
+flush.min_events: 10
+
+output.elasticsearch:
+  hosts: ["https://es:9200"]
+  ssl.verification_mode: "none"
+  username: elastic
+  password: elastic
+  # customize index naming and data events
+  # index: "demo-apm-%{[observer.version]}-%{[processor.event]}-%{[+yyyy.MM.dd]}-staging"
+  # compression level of gzip, sending buffered data to ES
+  # increasing this will reduce network usage, but increase cpu usage
+  compression_level: 0
+
+# setup.template.name: 'demo-apm'
+# setup.template.pattern: 'demo-apm-*'
+setup.template.settings:
+  index.codec: default

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "snippet/grpc/proto";
+
+message UserFindReq {
+  int64 id = 1;
+}
+
+service UserService {
+  rpc findUser(UserFindReq) returns (User);
+}
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  int32 age = 3;
+}
+
+message Error {
+  int32 code = 1;
+  string msg = 2;
+}

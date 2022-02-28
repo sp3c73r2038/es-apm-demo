@@ -1,0 +1,23 @@
+Simple demostration for ES APM
+
+- ~server stack~ setup ES APM stack locally
+- ~golang-grpc~ simple golang grpc service example
+- ~nodejs-loopback~
+
+** prerequisite
+
+- make
+- docker-compose with docker
+- golang client
+  + golang 1.12+
+  + [[https://github.com/golang/protobuf][protoc-gen-go]]
+- nodejs client
+  + nodejs 12+
+
+** run
+
+start server stack then run client
+
+- http://localhost:3000 for client endpoint
+- http://localhost:5601 for kibana, default user/pass is ~elastic/elastic~
+- http://localhost:3001 for grafana

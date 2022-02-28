@@ -1,0 +1,4 @@
+*.pem
+/server-stask/es-data/
+/golang-grpc/bin/
+/nodejs-loopback/node_modules/

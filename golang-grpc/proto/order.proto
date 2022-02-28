@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = "snippet/grpc/proto";
+
+message OrderFindReq {
+  int64 id = 1;
+}
+
+message UserOrderFindReq {
+  int64 user_id = 1;
+}
+
+service OrderService {
+  rpc findOrder(OrderFindReq) returns (Order);
+  rpc findUserOrder(UserOrderFindReq) returns (Orders);
+}
+
+message Order {
+  int64 id = 1;
+  string product = 2;
+  int64 user_id = 3;
+}
+
+message Orders {
+  repeated Order orders = 1;
+}
