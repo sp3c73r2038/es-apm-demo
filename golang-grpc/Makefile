@@ -1,4 +1,5 @@
 ELASTIC_APM_SERVER_URL := http://127.0.0.1:8201
+ELASTIC_APM_API_KEY :=
 
 -include local.mk
 
@@ -15,6 +16,7 @@ build-client:
 	go build -o bin/client client.go
 
 user: build-user
+	ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY} \
 	ELASTIC_APM_ACTIVE=true ELASTIC_APM_SERVICE_NAME=golang-grpc-demo-user \
 		ELASTIC_APM_DISABLE_METRICS="system*,transaction*,golang*" \
 		ELASTIC_APM_BREAKDOWN_METRIC=true \
@@ -23,6 +25,7 @@ user: build-user
 		bin/user
 
 order: build-order
+	ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY} \
 	ELASTIC_APM_ACTIVE=true ELASTIC_APM_SERVICE_NAME=golang-grpc-demo-order \
 		ELASTIC_APM_DISABLE_METRICS="system*,transaction*,golang*" \
 		ELASTIC_APM_BREAKDOWN_METRIC=true \
@@ -31,6 +34,7 @@ order: build-order
 		bin/order
 
 client: build-client
+	ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY} \
 	ELASTIC_APM_ACTIVE=true ELASTIC_APM_SERVICE_NAME=golang-grpc-demo-client \
 		ELASTIC_APM_DISABLE_METRICS="system*,transaction*,golang*" \
 		ELASTIC_APM_BREAKDOWN_METRIC=true \

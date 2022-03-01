@@ -1,4 +1,11 @@
 apm-server:
+  # uncomment to enable api-key authentication
+  # need to create api-key in kibana stack management
+  # and fill that into the client configuration
+  # auth:
+  #   api_key.enabled: true
+  #   api_key.limit: 50
+
   host: "0.0.0.0:8200"
   # ilm:
   #   enabled: true
